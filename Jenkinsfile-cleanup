@@ -24,13 +24,13 @@ podTemplate(
           sh "kubectl get pods -o wide"
         }
       }
-      stage('Clean up ELK')
-      {
-        container('kubectl')
-        {
-          sh "cd elastic; kubectl delete --force -f ."
-        }
-      }
+      // stage('Clean up ELK')
+      // {
+      //   container('kubectl')
+      //   {
+      //     sh "cd elastic; kubectl delete --force -f ."
+      //   }
+      // }
       // stage('Clean up FluentD')
       // {
       //   container('kubectl')
