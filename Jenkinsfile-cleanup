@@ -1,0 +1,60 @@
+podTemplate(
+  label: 'parent',
+  containers:
+  [
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.12', command: 'cat', ttyEnabled: true),
+  ],
+  volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')],
+  serviceAccount: 'jenkins',
+  namespace: 'jenkins')
+{
+  node ('parent')
+  {
+    try
+    {
+      stage('Clone repository')
+      {
+        /* Let's make sure we have the repository cloned to our workspace */
+        checkout scm
+      }
+      stage('Show that everything is up and running before deletion')
+      {
+        container('kubectl')
+        {
+          sh "kubectl get pods -o wide"
+        }
+      }
+      stage('Clean up ELK')
+      {
+        container('kubectl')
+        {
+          sh "cd elastic; kubectl delete --force -f ."
+        }
+      }
+      // stage('Clean up FluentD')
+      // {
+      //   container('kubectl')
+      //   {
+      //     sh 'cd fluentd/solutions/logging/fluentd/spec/daemonset; kubectl delete --force -f .'
+      //   }
+      // }
+      stage('Clean up Redis')
+      {
+        container('kubectl')
+        {
+          sh "cd redis; kubectl delete --force -f ."
+        }
+      }
+    }
+    finally
+    {
+      stage('Show that we cleaned up after ourselves')
+      {
+        container('kubectl')
+        {
+          sh "kubectl get pods -o wide"
+        }
+      }
+    }
+  }
+}

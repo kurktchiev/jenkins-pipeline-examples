@@ -1,0 +1,161 @@
+# Create the main cluster set
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: redis-enterprise
+spec:
+  serviceName: redis-enterprise
+  replicas: 3
+  template:
+    metadata:
+      annotations:
+          diamanti.com/endpoint0: '{"network":"blue","perfTier":"high"}'
+      labels:
+        app: redis-enterprise
+    spec:
+      containers:
+        - name: redis-enterprise
+          image: redislabs/redis:5.0.0-31
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: STATEFULSET_NAME
+              value: redis-enterprise
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "/bin/bash"
+                  - "-c"
+                  - |
+                    # Enable the flash location
+                    chown redislabs:redislabs -R /var/opt/redislabs/flash
+                    exit
+          ports:
+            - name: discovery
+              containerPort: 8001
+            - name: ui
+              containerPort: 8443
+            - name: redis
+              containerPort: 26379
+          resources:
+            requests:
+              memory: "4Gi"
+          securityContext:
+            capabilities:
+              add:
+                - SYS_RESOURCE
+          volumeMounts:
+            - name: "config"
+              mountPath: "/opt/redislabs/config/ccs-redis.conf"
+              subPath: "ccs-redis.conf"
+            - name: "flash"
+              mountPath: "/var/opt/redislabs/flash"
+            - name: "cluster-create"
+              mountPath: "/opt/cluster-create.sh"
+              subPath: "cluster-create.sh"
+            - name: "cluster-join"
+              mountPath: "/opt/cluster-join.sh"
+              subPath: "cluster-join.sh"
+      volumes:
+        - name: config
+          configMap:
+            name: redis-enterprise
+        - name: cluster-create
+          configMap:
+            name: redis-enterprise-create-cluster
+        - name: cluster-join
+          configMap:
+            name: redis-enterprise-join-cluster
+        - name: flash
+  volumeClaimTemplates:
+  - metadata:
+      name: flash
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: high-ext4
+      resources:
+        requests:
+          storage: 100Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-enterprise
+data:
+  ccs-redis.conf: |
+    # Memtier CCS Redis server configuration file
+    daemonize yes
+    pidfile /var/run/ccs-redis.pid
+    port 36379
+    bind 0.0.0.0
+    unixsocket /tmp/local_ccs.sock
+    loglevel notice
+    logfile /var/opt/redislabs/log/ccs-redis.log
+    save 300 1
+    rdbcompression yes
+    dbfilename ccs-redis.rdb
+    appendonly no
+    appendfsync everysec
+    hash-max-ziplist-entries 512
+    hash-max-ziplist-value 64
+    set-max-intset-entries 512
+    activerehashing yes
+    slave-serve-stale-data yes
+    slave-read-only yes
+    load-on-startup yes
+    rename-command flushdb __safe__flushdb
+    rename-command flushall __safe__flushall
+    oom-score-adj -900 0 0 0
+    optionally-include /etc/opt/redislabs/ccs-auth.conf
+    stop-writes-on-bgsave-error no
+    repl-diskless-sync yes
+    repl-diskless-load yes
+    proc-title ccs
+
+    # note: dir will be overridden by ccs-paths if it is non-standard.
+    dir /var/opt/redislabs/persist/ccs
+    optionally-include /etc/opt/redislabs/ccs-paths.conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-enterprise-create-cluster
+data:
+  cluster-create.sh: |
+    /opt/redislabs/bin/rladmin cluster create name diamanti.test username test@test.com password test flash_enabled flash_path /var/opt/redislabs/flash; exit
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-enterprise-join-cluster
+data:
+  cluster-join.sh: |
+    export IP=$(/usr/bin/getent hosts getent hosts redis-enterprise-0.redis-enterprise.jenkins.svc.boris.eng.diamanti.com | cut -d " " -f 1);  /opt/redislabs/bin/rladmin cluster join nodes $IP name diamanti.test username test@test.com password test flash_enabled flash_path /var/opt/redislabs/flash replace_node 2; exit
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-enterprise
+  labels:
+    app: redis-enterprise
+spec:
+  clusterIP: None
+  ports:
+    - name: discovery
+      port: 8001
+      targetPort: 8001
+      protocol: TCP
+    - name: ui
+      port: 8443
+      targetPort: 8443
+      protocol: TCP
+    - name: redis
+      port: 26379
+      targetPort: 26379
+      protocol: TCP
+  selector:
+    app: redis-enterprise

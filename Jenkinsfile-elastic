@@ -1,0 +1,80 @@
+podTemplate(
+  label: 'parent',
+  containers: [
+                containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.12', command: 'cat', ttyEnabled: true),
+                containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
+              ],
+  volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')],
+  serviceAccount: 'jenkins',
+  namespace: 'jenkins')
+{
+  node ('parent')
+  {
+    def kibana_host
+    def kibana_port
+    try
+    {
+      stage('Clone repository')
+      {
+        /* Let's make sure we have the repository cloned to our workspace */
+        checkout scm
+      }
+      stage('Clone FluentD Solutions Branch for later use')
+      {
+        dir('fluentd')
+        {
+          git url: 'http://gitlab.eng.diamanti.com/software/solutions.git', branch: 'logging-fluentd'
+        }
+      }
+      stage('Run kubectl')
+      {
+        container('kubectl')
+        {
+          sh "kubectl get pods -o wide"
+        }
+      }
+      stage('Show the workdir directories')
+      {
+        container('kubectl')
+        {
+          sh "ls -l"
+        }
+      }
+      stage('Deploy EFK on Diamanti')
+      {
+        container('kubectl')
+        {
+          sh 'cd elastic; sh run.sh install'
+        }
+      }
+      stage('Get the Kibana IP')
+      {
+        container('kubectl')
+        {
+          sh 'kubectl get endpoints kibana'
+        }
+      }
+      stage('Kick off another job to get logs into Kibana from Jenkins')
+      {
+        build 'docker-build-example'
+      }
+    }
+    finally
+    {
+      // stage('Deploy FluentD so we get Diamanti and Container logs')
+      // {
+      //   container('kubectl')
+      //   {
+      //     sh 'cd fluentd/logging/fluentd/spec/daemonset; kubectl create -f .'
+      //   }
+      // }
+      // stage('Show That FluentD is Deployed')
+      // {
+      //   container('kubectl')
+      //   {
+      //     sh 'kubectl get pods -o wide'
+      //   }
+      // }
+    }
+  }
+}
