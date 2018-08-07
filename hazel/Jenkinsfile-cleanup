@@ -35,7 +35,7 @@ podTemplate(
       }
       stage('Show Kubernetes instances running')
       {
-        container('kubecl')
+        container('kubectl')
         {
           sh 'kubectl get pods -o wide'
         }
@@ -49,7 +49,7 @@ podTemplate(
       }
       stage('Show Kubernetes instances running')
       {
-        container('kubecl')
+        container('kubectl')
         {
           sh 'kubectl get pods -o wide | grep hazelcast'
         }
