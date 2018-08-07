@@ -20,31 +20,32 @@ podTemplate(
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
       }
-      stage('Build the Jenkins Master Image')
-      {
-        container('docker')
-        {
-          sh 'docker login -u boriskd -p ${PW}'
-          // dockerBuild = docker.build("diamanti/jenkins-master")
-          sh 'docker build -t diamanti/jenkins-master .'
-        }
-      }
-      stage('Push Jenkins Master Image to DockerHub')
-      {
-        container('docker')
-        {
-          // docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials')
-          // {
-          //   dockerBuild.push("diamanti/jenkins-master")
-          // }
-          sh 'docker push diamanti/jenkins-master'
-        }
-      }
+      // stage('Build the Jenkins Master Image')
+      // {
+      //   container('docker')
+      //   {
+      //     sh 'docker login -u boriskd -p ${PW}'
+      //     // dockerBuild = docker.build("diamanti/jenkins-master")
+      //     sh 'docker build -t diamanti/jenkins-master .'
+      //   }
+      // }
+      // stage('Push Jenkins Master Image to DockerHub')
+      // {
+      //   container('docker')
+      //   {
+      //     // docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials')
+      //     // {
+      //     //   dockerBuild.push("diamanti/jenkins-master")
+      //     // }
+      //     sh 'docker push diamanti/jenkins-master'
+      //   }
+      // }
       stage('Show Helm Version')
       {
         container('helm')
         {
           sh 'helm version'
+          sh 'helm init --client-only'
         }
       }
       stage('Install Hazelcast')
