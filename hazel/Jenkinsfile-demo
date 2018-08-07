@@ -34,7 +34,7 @@ podTemplate(
       {
         container('maven')
         {
-          sh 'cd hazel-demo-code/demo; ls -la'
+          sh 'cd hazel-demo-code/demo; ls -la bin/'
         }
       }
     }
