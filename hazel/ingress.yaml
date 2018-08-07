@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hazelcast-ingress
+spec:
+  rules:
+  - host: mancenter.ingress.sol.diamanti.com
+    http:
+      paths:
+        - path: /hazelcast-mancenter
+          backend:
+            serviceName: broken-echidna-hazelcast-enterprise-mancenter
+            servicePort: 8080
