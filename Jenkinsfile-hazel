@@ -39,7 +39,17 @@ podTemplate(
       }
       stage('Wait for everything to come up')
       {
-        sh 'while true; do printf \".\"; result=$(kubectl get pods | grep \"demo-hazelcast-enterprise-\" | grep -c \"Running\"); if [ \"$result\"  -ge 4 ]; then echo \" \"; break; fi; sleep 1; done'
+        container('kubectl')
+        {
+          sh 'while true; do printf \".\"; result=$(kubectl get pods | grep \"demo-hazelcast-enterprise-\" | grep -c \"Running\"); if [ \"$result\"  -ge 4 ]; then echo \" \"; break; fi; sleep 1; done'
+        }
+      }
+      stage('Show Helm instances running')
+      {
+        container('helm')
+        {
+          sh 'helm ls'
+        }
       }
     }
     finally{}
