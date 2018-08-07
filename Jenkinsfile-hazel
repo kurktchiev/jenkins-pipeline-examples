@@ -42,7 +42,7 @@ podTemplate(
         container('kubectl')
         {
           sh 'cd hazel; sh wait.sh'
-          sh 'kubectl get pods'
+          sh 'kubectl get pods -o wide'
         }
       }
       stage('Show Helm instances running')
