@@ -36,7 +36,7 @@ podTemplate(
       {
         container('helm')
         {
-          sh 'cd hazel-chart/stable/hazelcast-enterprise/; helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.clusterIP="None",mancenter.licenseKey=${MAN_CENTER_HAZEL_LICENSE} .'
+          sh 'cd hazel-chart/stable/hazelcast-enterprise/; helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.type=ClusterIP,mancenter.service.clusterIP="None",mancenter.licenseKey=${MAN_CENTER_HAZEL_LICENSE} .'
         }
       }
     }
