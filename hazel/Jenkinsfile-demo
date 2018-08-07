@@ -1,0 +1,43 @@
+podTemplate(
+  label: 'parent',
+  containers:
+  [
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.12', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.8.0', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'maven', image: 'maven', command: 'cat', ttyEnabled: true),
+  ],
+  volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')],
+  serviceAccount: 'jenkins',
+  namespace: 'jenkins')
+{
+  node ('parent')
+  {
+    def dockerBuild
+    try
+    {
+      stage('Clone repository')
+      {
+        /* Let's make sure we have the repository cloned to our workspace */
+        checkout scm
+        dir('hazel-demo-code'){
+          git url: "https://github.com/hazelcast/hazelcast-code-samples.git"
+        }
+      }
+      stage('Do a Maven Build')
+      {
+        container('maven')
+        {
+          sh 'cd hazel-demo-code/demo; mvn install'
+        }
+      }
+      stage('Check the produced code')
+      {
+        container('maven')
+        {
+          sh 'cd hazel-demo-code/demo; ls -la'
+        }
+      }
+    }
+    finally{}
+  }
+}
