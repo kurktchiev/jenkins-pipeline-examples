@@ -34,7 +34,9 @@ podTemplate(
       {
         container('maven')
         {
-          sh 'cd hazel-demo-code/demo; ls -la bin/'
+          sh 'cd hazel-demo-code/demo/bin; sh clientConsole.sh'
+          sh 'cd hazel-demo-code/demo/bin; sh console.sh'
+          sh 'cd hazel-demo-code/demo/bin; sh simpleMapTest.sh'
         }
       }
     }
