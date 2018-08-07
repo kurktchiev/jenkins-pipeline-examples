@@ -9,5 +9,5 @@ spec:
       paths:
         - path: /hazelcast-mancenter
           backend:
-            serviceName: broken-echidna-hazelcast-enterprise-mancenter
+            serviceName: demo-hazelcast-enterprise-mancenter
             servicePort: 8080
