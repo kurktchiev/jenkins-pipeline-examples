@@ -1,0 +1,60 @@
+podTemplate(
+  label: 'parent',
+  containers:
+  [
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.12', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.8.0', command: 'cat', ttyEnabled: true),
+  ],
+  volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')],
+  serviceAccount: 'jenkins',
+  namespace: 'jenkins')
+{
+  node ('parent')
+  {
+    def dockerBuild
+    try
+    {
+      stage('Clone repository')
+      {
+        /* Let's make sure we have the repository cloned to our workspace */
+        checkout scm
+      }
+      stage('Initialize Helm')
+      {
+        container('helm')
+        {
+          sh 'helm init --client-only'
+        }
+      }
+      stage('Show Helm instances running')
+      {
+        container('helm')
+        {
+          sh 'helm ls'
+        }
+      }
+      stage('Show Kubernetes instances running')
+      {
+        container('kubecl')
+        {
+          sh 'kubectl get pods -o wide'
+        }
+      }
+      stage('Delete Helm Chart')
+      {
+        container('helm')
+        {
+          sh 'helm delete --purge demo'
+        }
+      }
+      stage('Show Kubernetes instances running')
+      {
+        container('kubecl')
+        {
+          sh 'kubectl get pods -o wide | grep hazelcast'
+        }
+      }
+    }
+    finally{}
+  }
+}
