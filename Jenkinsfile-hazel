@@ -53,7 +53,7 @@ podTemplate(
         {
           sh 'helm repo add hazelcast https://hazelcast.github.io/charts/'
           sh 'helm repo update'
-          sh 'helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.clusterIP="None",mancenter.licenseKey=%{MAN_CENTER_HAZEL_LICENSE} hazelcast/hazelcast-enterprise'
+          sh 'helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.clusterIP="None",mancenter.licenseKey=${MAN_CENTER_HAZEL_LICENSE} hazelcast/hazelcast-enterprise'
         }
       }
     }
