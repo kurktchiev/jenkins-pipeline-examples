@@ -34,7 +34,7 @@ podTemplate(
       {
         container('maven')
         {
-          sh 'sh hazel-demo-code/demo/bin/simpleMapTest.sh demo-hazelcast-enterprise & sleep 300; kill $!'
+          sh 'cd hazel-demo-code/demo/bin/; sh simpleMapTest.sh demo-hazelcast-enterprise & sleep 300; kill $!'
         }
       }
     }
