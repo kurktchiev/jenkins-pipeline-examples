@@ -34,9 +34,7 @@ podTemplate(
       {
         container('maven')
         {
-        //  sh 'cd hazel-demo-code/demo/bin; sh clientConsole.sh demo-hazelcast-enterprise'
-        //  sh 'cd hazel-demo-code/demo/bin; sh console.sh demo-hazelcast-enterprise'
-          sh 'cd hazel-demo-code/demo/bin; sh simpleMapTest.sh demo-hazelcast-enterprise'
+          sh 'cd hazel-demo-code/demo/bin; sh simpleMapTest.sh demo-hazelcast-enterprise & sleep 300; kill $!'
         }
       }
     }
