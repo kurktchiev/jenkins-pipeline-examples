@@ -20,11 +20,8 @@ podTemplate(
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
         dir('hazel-chart'){
-          git url: "https://github.com/hazelcast/charts.git"
+          git url: "https://github.com/ebalsumgo/charts.git"
         }
-      }
-      stage('Modify Helm Chart') {
-        sh 'sed -ie s/apps\/v1/apps\/v1beta1/g hazel-chart/templates/statefulset.yaml'
       }
       stage('Show Helm Version')
       {
@@ -39,9 +36,7 @@ podTemplate(
       {
         container('helm')
         {
-          sh 'helm repo add hazelcast https://hazelcast.github.io/charts/'
-          sh 'helm repo update'
-          sh 'helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.clusterIP="None",mancenter.licenseKey=${MAN_CENTER_HAZEL_LICENSE} hazelcast/hazelcast-enterprise'
+          sh 'cd hazel-chart/charts/stable/hazelcast-enterprise/; helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.clusterIP="None",mancenter.licenseKey=${MAN_CENTER_HAZEL_LICENSE} .'
         }
       }
     }
