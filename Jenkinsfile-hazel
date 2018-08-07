@@ -19,6 +19,9 @@ podTemplate(
       {
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
+        dir('helm'){
+          git url: "https://github.com/hazelcast/charts.git"
+        }
       }
       // stage('Build the Jenkins Master Image')
       // {
@@ -44,6 +47,7 @@ podTemplate(
       {
         container('helm')
         {
+          sh 'ls -la'
           sh 'helm version'
           sh 'helm init --client-only'
         }
