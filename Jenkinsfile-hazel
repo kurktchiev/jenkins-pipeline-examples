@@ -1,0 +1,65 @@
+podTemplate(
+  label: 'parent',
+  containers:
+  [
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.12', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v1.8.0', command: 'cat', ttyEnabled: true),
+  ],
+  volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')],
+  serviceAccount: 'jenkins',
+  namespace: 'jenkins')
+{
+  node ('parent')
+  {
+    def dockerBuild
+    try
+    {
+      stage('Clone repository')
+      {
+        /* Let's make sure we have the repository cloned to our workspace */
+        checkout scm
+      }
+      stage('Build the Jenkins Master Image')
+      {
+        container('docker')
+        {
+          sh 'docker login -u boriskd -p ${PW}'
+          // dockerBuild = docker.build("diamanti/jenkins-master")
+          sh 'docker build -t diamanti/jenkins-master .'
+        }
+      }
+      stage('Push Jenkins Master Image to DockerHub')
+      {
+        container('docker')
+        {
+          // docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials')
+          // {
+          //   dockerBuild.push("diamanti/jenkins-master")
+          // }
+          sh 'docker push diamanti/jenkins-master'
+        }
+      }
+      stage('Show Helm Version')
+      {
+        container('helm')
+        {
+          sh 'helm version'
+        }
+      }
+      stage('Install Hazelcast')
+      {
+        container('helm')
+        {
+          sh 'helm repo add hazelcast https://hazelcast.github.io/charts/'
+          sh 'helm repo update'
+          sh 'helm install --set hazelcast.licenseKey=${HAZEL_LICENSE},cluster.memberCount=3,service.clusterIP="None",mancenter.service.clusterIP="None",mancenter.licenseKey=%{MAN_CENTER_HAZEL_LICENSE} hazelcast/hazelcast-enterprise'
+        }
+      }
+    }
+    finally
+    {
+
+    }
+  }
+}
