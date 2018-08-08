@@ -16,7 +16,7 @@ SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(
 def serverUrl =  "https://" + env.KUBERNETES_SERVICE_HOST + ":" + env.KUBERNETES_SERVICE_PORT
 def jenkinsUrl = "http://" + env.JENKINS_SERVICE_HOST + ":" + env.JENKINS_SERVICE_PORT
 
-def kubernetes = new KubernetesCloud("kubernetes", null, serverUrl, env.JENKINS_NAMESPACE, jenkinsUrl, '10', 0, 0, 5)
+def kubernetes = new KubernetesCloud("kubernetes", null, serverUrl, env.JENKINS_NAMESPACE, jenkinsUrl, '100', 0, 0, 5)
 def cacert = new File("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt").getText('UTF-8')
 kubernetes.setSkipTlsVerify(false)
 kubernetes.setServerCertificate(cacert)
