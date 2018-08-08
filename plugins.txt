@@ -1,4 +1,4 @@
-blueocean:latest
+#blueocean:latest
 ws-cleanup:latest
 structs:latest
 kubernetes-pipeline-devops-steps:latest
