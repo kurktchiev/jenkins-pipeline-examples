@@ -1,4 +1,11 @@
 import hudson.plugins.git.*;
+import jenkins.model.*
+import jenkins.util.SystemProperties
+import com.cloudbees.plugins.credentials.impl.*
+import com.cloudbees.plugins.credentials.*
+import com.cloudbees.plugins.credentials.domains.*
+import org.csanchez.jenkins.plugins.kubernetes.*
+import org.csanchez.jenkins.plugins.*
 
 def scm = new GitSCM("https://github.com/ebalsumgo/jenkins-pipeline-examples.git")
 scm.branches = [new BranchSpec("*/master")];
