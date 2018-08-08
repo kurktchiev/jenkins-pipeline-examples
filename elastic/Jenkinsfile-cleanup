@@ -24,25 +24,18 @@ podTemplate(
           sh "kubectl get pods -o wide"
         }
       }
-      // stage('Clean up ELK')
-      // {
-      //   container('kubectl')
-      //   {
-      //     sh "cd elastic; kubectl delete --force -f ."
-      //   }
-      // }
-      // stage('Clean up FluentD')
-      // {
-      //   container('kubectl')
-      //   {
-      //     sh 'cd fluentd/solutions/logging/fluentd/spec/daemonset; kubectl delete --force -f .'
-      //   }
-      // }
-      stage('Clean up Redis')
+      stage('Clean up ELK')
       {
         container('kubectl')
         {
-          sh "cd redis; kubectl delete --force -f ."
+          sh "cd elastic; kubectl delete --force -f ."
+        }
+      }
+      stage('Clean up FluentD')
+      {
+        container('kubectl')
+        {
+          sh 'cd fluentd/solutions/logging/fluentd/spec/daemonset; kubectl delete --force -f .'
         }
       }
     }
