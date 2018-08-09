@@ -1,4 +1,5 @@
-import hudson.plugins.git.*;
+import hudson.plugins.git.*
+import hudson.model.*
 import jenkins.model.*
 import jenkins.util.SystemProperties
 import com.cloudbees.plugins.credentials.impl.*
