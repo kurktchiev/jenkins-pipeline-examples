@@ -17,13 +17,13 @@ def hazelDeployDefinition = new org.jenkinsci.plugins.workflow.cps.CpsScmFlowDef
 def hazelDeployJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "Deploy Hazelcast")
 hazelDeployJob.definition = hazelDeployDefinition
 
-ParameterDefinition hazelLicenseParamDef = new StringParameterDefinition("HAZEL_LICENSE", "", "")
-ParametersDefinitionProperty hazelLicenseParamsDef = new ParametersDefinitionProperty(hazelLicenseParamDef)
-hazelDeployParameters.add(hazelLicenseParamsDef)
-ParameterDefinition hazelManCenterLicenseParamDef = new StringParameterDefinition("MAN_CENTER_HAZEL_LICENSE", "", "")
-ParametersDefinitionProperty hazelManCenterLicenseParamsDef = new ParametersDefinitionProperty(hazelManCenterLicenseParamDef)
-hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
-hazelDeployJob.addProperty(hazelDeployParameters)
+// ParameterDefinition hazelLicenseParamDef = new StringParameterDefinition("HAZEL_LICENSE", "", "")
+// ParametersDefinitionProperty hazelLicenseParamsDef = new ParametersDefinitionProperty(hazelLicenseParamDef)
+// hazelDeployParameters.add(hazelLicenseParamsDef)
+// ParameterDefinition hazelManCenterLicenseParamDef = new StringParameterDefinition("MAN_CENTER_HAZEL_LICENSE", "", "")
+// ParametersDefinitionProperty hazelManCenterLicenseParamsDef = new ParametersDefinitionProperty(hazelManCenterLicenseParamDef)
+// hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
+// hazelDeployJob.addProperty(hazelDeployParameters)
 
 def hazelDemoDefinition = new org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition(scm, "hazel/Jenkinsfile-demo")
 def hazelDemoJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "Demo Hazelcast")
