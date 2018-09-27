@@ -10,7 +10,7 @@ def env = System.getenv()
 def jenkins = Jenkins.getInstance()
 
 // Create Credentials first - Service Account
-Credentials c = (Credentials) new ServiceAccountCredential(CredentialsScope.GLOBAL,'jenkins-sa-default',"")
+Credentials c = (Credentials) new ServiceAccountCredential(CredentialsScope.GLOBAL,'diamanti-jenkins-sa-default',"")
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c)
 
 def serverUrl =  "https://" + env.KUBERNETES_SERVICE_HOST + ":" + env.KUBERNETES_SERVICE_PORT
@@ -22,6 +22,6 @@ kubernetes.setSkipTlsVerify(false)
 kubernetes.setServerCertificate(cacert)
 
 // Add credentials
-kubernetes.setCredentialsId('jenkins-sa-default')
+kubernetes.setCredentialsId('diamanti-jenkins-sa-default')
 
 jenkins.clouds.replace(kubernetes)
