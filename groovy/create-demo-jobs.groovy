@@ -14,7 +14,7 @@ def parent = Jenkins.instance
 
 def hazelDeployParameters = []
 def hazelDeployDefinition = new org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition(scm, "hazel/Jenkinsfile")
-def hazelDeployJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "Deploy Hazelcast")
+def hazelDeployJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "WIP: Deploy Hazelcast")
 hazelDeployJob.definition = hazelDeployDefinition
 
 // ParameterDefinition hazelLicenseParamDef = new StringParameterDefinition("HAZEL_LICENSE", "", "")
