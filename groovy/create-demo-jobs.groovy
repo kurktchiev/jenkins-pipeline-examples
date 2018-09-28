@@ -12,13 +12,17 @@ def scm = new GitSCM("https://github.com/kurktchiev/jenkins-pipeline-examples.gi
 scm.branches = [new BranchSpec("*/master")];
 def parent = Jenkins.instance
 
+<<<<<<< HEAD
 //def hazelDeployParameters = []
+=======
+>>>>>>> 546dba2a93b8b1675dfe35ae74aa445badf5050c
 def hazelDeployDefinition = new org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition(scm, "hazel/Jenkinsfile")
 def hazelDeployJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "WIP: Deploy Hazelcast")
 hazelDeployJob.definition = hazelDeployDefinition
 
 ParameterDefinition hazelLicenseParamDef = new StringParameterDefinition("HAZEL_LICENSE", "", "")
 ParametersDefinitionProperty hazelLicenseParamsDef = new ParametersDefinitionProperty(hazelLicenseParamDef)
+<<<<<<< HEAD
 hazelDeployParameters.add(hazelLicenseParamsDef)
 ParameterDefinition hazelManCenterLicenseParamDef = new StringParameterDefinition("MAN_CENTER_HAZEL_LICENSE", "", "")
 ParametersDefinitionProperty hazelManCenterLicenseParamsDef = new ParametersDefinitionProperty(hazelManCenterLicenseParamDef)
@@ -27,6 +31,14 @@ hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
 hazelDeployJob.addProperty(hazelLicenseParamsDef)
 hazelDeployJob.addProperty(hazelManCenterLicenseParamsDef)
 hazelDeployJob.save()
+=======
+// hazelDeployParameters.add(hazelLicenseParamsDef)
+ParameterDefinition hazelManCenterLicenseParamDef = new StringParameterDefinition("MAN_CENTER_HAZEL_LICENSE", "", "")
+ParametersDefinitionProperty hazelManCenterLicenseParamsDef = new ParametersDefinitionProperty(hazelManCenterLicenseParamDef)
+// hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
+hazelDeployJob.addProperty(hazelManCenterLicenseParamsDef)
+hazelDeployJob.addProperty(hazelLicenseParamsDef)
+>>>>>>> 546dba2a93b8b1675dfe35ae74aa445badf5050c
 
 def hazelDemoDefinition = new org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition(scm, "hazel/Jenkinsfile-demo")
 def hazelDemoJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "Demo Hazelcast")
