@@ -25,6 +25,7 @@ ParametersDefinitionProperty hazelManCenterLicenseParamsDef = new ParametersDefi
 //hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
 //hazelDeployJob.addProperty(hazelDeployParameters)
 hazelDeployJob.addProperty(hazelLicenseParamsDef)
+hazelDeployJob.save()
 hazelDeployJob.addProperty(hazelManCenterLicenseParamsDef)
 hazelDeployJob.save()
 
