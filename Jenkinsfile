@@ -23,7 +23,7 @@ podTemplate(
       {
         container('docker')
         {
-          sh 'docker login -u boriskd -p ${PW}'
+          sh 'docker login -u ${USERNAME} -p ${PW}'
           // dockerBuild = docker.build("diamanti/jenkins-master")
           sh 'docker build -t diamanti/jenkins-master .'
         }
