@@ -19,10 +19,10 @@ hazelDeployJob.definition = hazelDeployDefinition
 
 ParameterDefinition hazelLicenseParamDef = new StringParameterDefinition("HAZEL_LICENSE", "", "")
 ParametersDefinitionProperty hazelLicenseParamsDef = new ParametersDefinitionProperty(hazelLicenseParamDef)
-hazelDeployParameters.add(hazelLicenseParamsDef)
+//hazelDeployParameters.add(hazelLicenseParamsDef)
 ParameterDefinition hazelManCenterLicenseParamDef = new StringParameterDefinition("MAN_CENTER_HAZEL_LICENSE", "", "")
 ParametersDefinitionProperty hazelManCenterLicenseParamsDef = new ParametersDefinitionProperty(hazelManCenterLicenseParamDef)
-hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
+//hazelDeployParameters.add(hazelManCenterLicenseParamsDef)
 //hazelDeployJob.addProperty(hazelDeployParameters)
 hazelDeployJob.addProperty(hazelLicenseParamsDef)
 hazelDeployJob.addProperty(hazelManCenterLicenseParamsDef)
