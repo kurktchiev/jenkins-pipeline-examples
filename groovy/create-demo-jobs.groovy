@@ -31,8 +31,9 @@ hazelCleanUpJob.definition = hazelCleanUpDefinition
 def dockerBuildDefinition = new org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition(scm, "Jenkinsfile")
 def dockerBuildJob = new org.jenkinsci.plugins.workflow.job.WorkflowJob(parent, "Build Docker Image of Jenkins")
 dockerBuildJob.definition = dockerBuildDefinition
-ParameterDefinition dockerParamDef = new PasswordParameterDefinition("PW", "", "")
-ParametersDefinitionProperty dockerParamsDef = new ParametersDefinitionProperty(dockerParamDef)
-dockerBuildJob.addProperty(dockerParamsDef)
+dockerBuildJob.addProperty(new ParametersDefinitionProperty([
+  new StringParameterDefinition("USERNAME", "changeme", "Docker Hub Username"),
+  new PasswordParameterDefinition("PW", "changeme", "Docker Hub Password")
+  ]))
 
 parent.reload()
