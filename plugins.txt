@@ -1,3 +1,4 @@
+gitlab:latest
 blueocean:latest
 ws-cleanup:latest
 structs:latest
@@ -15,7 +16,6 @@ workflow-api:latest
 workflow-job:latest
 ssh-credentials:latest
 authentication-tokens:latest
-github-branch-source:latest
 workflow-cps-global-lib:latest
 jackson2-api:latest
 ssh-slaves:latest
@@ -23,7 +23,6 @@ docker-workflow:latest
 pipeline-stage-tags-metadata:latest
 pipeline-milestone-step:latest
 credentials:latest
-github:latest
 jquery-detached:latest
 workflow-scm-step:latest
 matrix-auth:latest
@@ -36,7 +35,6 @@ kubernetes-pipeline-arquillian-steps:latest
 ant:latest
 bouncycastle-api:latest
 handlebars:latest
-pipeline-github-lib:latest
 variant:latest
 momentjs:latest
 plain-credentials:latest
@@ -46,7 +44,6 @@ timestamper:latest
 gradle:latest
 pipeline-rest-api:latest
 workflow-basic-steps:latest
-github-api:latest
 ldap:latest
 kubernetes-credentials:latest
 credentials-binding:latest
