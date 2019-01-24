@@ -1,48 +1,85 @@
-podTemplate(
-  label: 'parent',
+pipeline {
+  agent {
+    kubernetes {
+      cloud 'solutions1'
+      label 'jenkins-image-builder'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: sol-external-jenkins-diamanti-jenkins-sa
   containers:
-  [
-    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.12', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
-  ],
-  volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')],
-  serviceAccount: 'diamanti-jenkins-sa',
-  namespace: 'jenkins')
-{
-  node ('parent')
-  {
-    def dockerBuild
-    try
-    {
-      stage('Clone repository')
-      {
-        /* Let's make sure we have the repository cloned to our workspace */
-        checkout scm
-      }
-      stage('Build the Jenkins Master Image')
-      {
-        container('docker')
-        {
-          sh 'docker login -u ${USERNAME} -p ${PW}'
-          // dockerBuild = docker.build("diamanti/jenkins-master")
-          sh 'docker build -t diamantisolutions/jenkins-master .'
+  - name: docker
+    image: docker:1.11
+    command: ['cat']
+    tty: true
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+    }
+  }
+  options {
+    timestamps()
+  }
+  stages {
+    stage('Build Jenkins Docker Image') {
+      steps {
+        git 'https://github.com/kurktchiev/jenkins-pipeline-examples.git'
+        // updateGitlabCommitStatus name: 'docker-build-prod', state: 'pending'
+        container('docker') {
+          sh "docker login -u ${USERNAME} -p ${PW}"
+          sh "docker build -t ${IMAGE} ."
+          sh "docker tag ${IMAGE} ${IMAGE}:${TAG}.${BUILD_ID}"
         }
       }
-      stage('Push Jenkins Master Image to DockerHub')
-      {
-        container('docker')
-        {
-          // docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials')
-          // {
-          //   dockerBuild.push("diamanti/jenkins-master")
-          // }
-          sh 'docker push diamantisolutions/jenkins-master'
+      post {
+        success {
+          sh "echo Success"
+          // updateGitlabCommitStatus name: 'docker-build-prod', state: 'success'
+        }
+        failure {
+          sh "echo Failure"
+          // updateGitlabCommitStatus name: 'docker-build-prod', state: 'failed'
         }
       }
     }
-    finally
-    {
-
+    stage('Push to Docker Hub') {
+      steps {
+        // updateGitlabCommitStatus name: 'docker-push-prod', state: 'pending'
+        container('docker') {
+          sh "docker push ${IMAGE}:${TAG}.${BUILD_ID}"
+        }
+      }
+      post {
+        success {
+          sh "echo Success"
+          // updateGitlabCommitStatus name: 'docker-push-prod', state: 'success'
+        }
+        failure {
+          sh "echo Failure"
+          // updateGitlabCommitStatus name: 'docker-push-prod', state: 'failed'
+        }
+      }
+    }
+  }
+  post {
+    success {
+      sh "echo Success"
+      // updateGitlabCommitStatus name: 'build-prod', state: 'success'
+    }
+    failure {
+      sh "echo Failure"
+      // updateGitlabCommitStatus name: 'build-prod', state: 'failed'
+    }
+    aborted {
+      sh "echo Aborted"
+      // updateGitlabCommitStatus name: 'build-prod', state: 'canceled'
     }
   }
 }
